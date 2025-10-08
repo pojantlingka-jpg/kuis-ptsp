@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kuis Pedoman PTSP</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 10px; }
+  h2 { text-align:center; }
+  .question { margin-bottom: 15px; }
+  .options label { display: block; margin-bottom: 5px; cursor: pointer; }
+  .navigation { margin-top: 20px; text-align: center; }
+  button { padding: 8px 15px; margin: 5px; cursor: pointer; }
+  #result { margin-top: 20px; font-weight: bold; text-align:center; }
+</style>
+</head>
+<body>
+<h2>Kuis Pedoman PTSP</h2>
+
+<div id="quizContainer">
+  <form id="quizForm">
+    <div id="questionsContainer"></div>
+    <div class="navigation">
+      <button type="button" id="prevBtn" disabled>Previous</button>
+      <button type="button" id="nextBtn">Next</button>
+      <button type="button" id="submitBtn" style="display:none;">Submit</button>
+    </div>
+  </form>
+  <div id="result"></div>
+</div>
+
+<script>
+const allQuestions = [
+// Sesi 1 contoh 20 pertanyaan, tambahkan sesi 2-5 sesuai kebutuhan
+{
+  question: "Apa kepanjangan dari PTSP?",
+  options: ["Pelayanan Terpadu Satu Pintu", "Pelayanan Terpadu Sistem Pengadilan", "Pelayanan Terpadu Satuan Pengaduan", "Pelayanan Terpadu Sistem Peradilan"],
+  answer: 0,
+},
+{
+  question: "Apa tujuan utama dari Pelayanan Terpadu Satu Pintu (PTSP)?",
+  options: ["Mempercepat proses sidang", "Mewujudkan pelayanan yang cepat, mudah, dan transparan", "Menghilangkan peran petugas pengadilan", "Menyederhanakan struktur organisasi"],
+  answer: 1,
+},
+{
+  question: "Siapa atasan pejabat pengelola PTSP di Pengadilan Tinggi?",
+  options: ["Ketua Pengadilan Negeri", "Ketua Mahkamah Agung", "Ketua Pengadilan Tinggi", "Direktur Jenderal Badan Peradilan Umum"],
+  answer: 2,
+},
+{
+  question: "Apa prinsip pelaksanaan PTSP?",
+  options: ["Efektivitas dan Kolusi", "Keterpaduan dan Efisiensi", "Kompleksitas dan Nepotisme", "Lambat dan Rumit"],
+  answer: 1,
+},
+{
+  question: "Berapa meja minimum yang harus ada di PTSP Pengadilan Negeri?",
+  options: ["2 meja", "3 meja", "5 meja", "6 meja"],
+  answer: 3,
+},
+{
+  question: "Pelayanan apa yang dilakukan di ruang Front Office PTSP?",
+  options: ["Mengelola sidang pengadilan", "Menerima pendaftaran layanan dan verifikasi berkas", "Menyimpan dokumen rahasia", "Menyelesaikan pelaporan kasus"],
+  answer: 1,
+},
+{
+  question: "Siapa yang menjadi penyelenggara PTSP?",
+  options: ["Mahkamah Agung", "Pengadilan Tinggi dan Pengadilan Negeri", "Direktorat Jenderal Badan Peradilan Umum", "Kementerian Hukum dan HAM"],
+  answer: 1,
+},
+{
+  question: "Apa saja prinsip pelaksanaan PTSP?",
+  options: ["Keterpaduan, Efektif, Efisien, Ekonomis, Koordinasi, Akuntabilitas, Aksesibilitas", "Kompleksitas, Kolusi, Nepotisme", "Lambat, Rumit, Mahal", "Kompetisi, Rahasia, Tidak Transparan"],
+  answer: 0,
+},
+{
+  question: "Dalam PTSP, siapa yang bertanggung jawab atas pelaksanaan di setiap meja PTSP?",
+  options: ["Ketua Mahkamah Agung", "Setiap Panitera Muda dan Kepala Bagian", "Petugas Keamanan", "Petugas Kebersihan"],
+  answer: 1,
+},
+{
+  question: "Apa maksud dari “access to justice” dalam pedoman PTSP?",
+  options: ["Memberi akses mudah ke ruang sidang", "Meningkatkan akses keadilan bagi masyarakat pencari keadilan", "Menyediakan akses internet di pengadilan", "Membatasi akses bagi pihak tidak berkepentingan"],
+  answer: 1,
+},
+{
+  question: "Siapa yang melakukan pengawasan jalannya pelayanan PTSP sehari-hari?",
+  options: ["Hakim atau pejabat yang ditunjuk", "Petugas kebersihan", "Pihak pengunjung", "Ketua Panitera"],
+  answer: 0,
+},
+{
+  question: "Berapa kali pengawasan PTSP dilakukan setiap hari?",
+  options: ["1 kali", "2 kali", "3 kali", "4 kali"],
+  answer: 1,
+},
+{
+  question: "Apa fungsi utama dari Back Office dalam PTSP?",
+  options: ["Menerima pendaftaran permohonan", "Memproses berkas sampai tahap akhir layanan", "Menyediakan informasi jadwal sidang", "Mengatur antrian pengunjung"],
+  answer: 1,
+},
+{
+  question: "Apa yang harus dilakukan petugas PTSP jika berkas permohonan lengkap?",
+  options: ["Menolak berkas", "Meneruskan ke ruangan back office untuk diproses", "Mengembalikan berkas kepada pemohon", "Menghapus data pemohon"],
+  answer: 1,
+},
+{
+  question: "Bagaimana jam layanan PTSP umumnya diatur?",
+  options: ["Dibuka 30 menit lebih awal dari jam kerja pengadilan", "Dibuka setelah jam kerja pengadilan", "Tidak ada jam layanan resmi", "Dibuka malam hari"],
+  answer: 0,
+},
+{
+  question: "Bagaimana prosedur bagi pengunjung untuk menggunakan PTSP?",
+  options: ["Langsung masuk ruang sidang tanpa administrasi", "Mendaftar dan mengambil nomor antrian, memenuhi persyaratan layanan", "Hanya mengirim berkas secara elektronik", "Menghubungi petugas via telepon"],
+  answer: 1,
+},
+{
+  question: "Apa jenis layanan perkara yang termasuk dalam ruang lingkup PTSP?",
+  options: ["Perkara Perdata dan Pidana", "Hanya perkara pidana", "Hanya perkara perdata", "Layanan non-perkara"],
+  answer: 0,
+},
+{
+  question: "Apa yang harus dilakukan pengadilan jika terjadi force majeur dalam jam layanan PTSP?",
+  options: ["Tetap membuka layanan tanpa perubahan", "Menyesuaikan jam layanan PTSP sesuai kondisi", "Menutup layanan secara permanen", "Mengalihkan layanan ke luar pengadilan"],
+  answer: 1,
+},
+{
+  question: "Apa yang dimaksud dengan standar pelayanan PTSP?",
+  options: ["Tolok ukur acuan penyelenggaraan pelayanan berkualitas dan terukur", "Aturan yang boleh diabaikan oleh petugas", "Dokumen rahasia internal pengadilan", "Hanya aturan jam kerja"],
+  answer: 0,
+},
+{
+  question: "Siapa yang dapat mengajukan pengaduan terkait layanan PTSP?",
+  options: ["Hanya hakim", "Masyarakat atau pengguna layanan", "Pejabat pengadilan saja", "Petugas PTSP"],
+  answer: 1,
+},
+];
+
+const questionsPerSession = 20;
+const totalSessions = Math.ceil(allQuestions.length / questionsPerSession);
+
+let currentSession = 1;
+
+const quizForm = document.getElementById("quizForm");
+const questionsContainer = document.getElementById("questionsContainer");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const submitBtn = document.getElementById("submitBtn");
+const resultDiv = document.getElementById("result");
+
+function renderSession(session) {
+  resultDiv.textContent = "";
+  questionsContainer.innerHTML = "";
+  const startIndex = (session - 1) * questionsPerSession;
+  const endIndex = Math.min(startIndex + questionsPerSession, allQuestions.length);
+  for(let i = startIndex; i < endIndex; i++){
+    const q = allQuestions[i];
+    const qDiv = document.createElement("div");
+    qDiv.className = "question";
+    let qHtml = <p><b>Q${i+1}. ${q.question}</b></p>;
+    q.options.forEach((opt, idx) => {
+      const checkedAttribute = getUserAnswer(i) === idx ? "checked" : "";
+      qHtml += `
+      <div class="options">
+        <label>
+          <input type="radio" name="q${i}" value="${idx}" ${checkedAttribute}/>
+          ${opt}
+        </label>
+      </div>`;
+    });
+    qDiv.innerHTML = qHtml;
+    questionsContainer.appendChild(qDiv);
+  }
+
+  prevBtn.disabled = session === 1;
+  nextBtn.style.display = session === totalSessions ? "none" : "inline-block";
+  submitBtn.style.display = session === totalSessions ? "inline-block" : "none";
+}
+
+let userAnswers = {};
+
+function getUserAnswer(questionIndex) {
+  return userAnswers[questionIndex];
+}
+
+function saveUserAnswers() {
+  const startIndex = (currentSession - 1) * questionsPerSession;
+  const endIndex = Math.min(startIndex + questionsPerSession, allQuestions.length);
+  for(let i = startIndex; i < endIndex; i++){
+    const selected = document.querySelector(input[name="q${i}"]:checked);
+    if(selected) {
+      userAnswers[i] = parseInt(selected.value);
+    }
+  }
+}
+
+prevBtn.addEventListener("click", () => {
+  saveUserAnswers();
+  if(currentSession > 1) {
+    currentSession--;
+    renderSession(currentSession);
+  }
+});
+
+nextBtn.addEventListener("click", () => {
+  saveUserAnswers();
+  if(currentSession < totalSessions) {
+    currentSession++;
+    renderSession(currentSession);
+  }
+});
+
+submitBtn.addEventListener("click", () => {
+  saveUserAnswers();
+  let score = 0;
+  for(let i = 0; i < allQuestions.length; i++){
+    if(userAnswers[i] === allQuestions[i].answer){
+      score++;
+    }
+  }
+  resultDiv.textContent = Kuis selesai! Nilai anda adalah: ${score} dari ${allQuestions.length};
+  quizForm.style.display = "none";
+});
+
+renderSession(currentSession);
+</script>
+</body>
+</html>
